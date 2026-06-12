@@ -8,11 +8,11 @@ import {
   limit,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { getFirebaseDb } from "./firebase";
 import type { QuizResult } from "@/types";
 
 export async function saveQuizResult(result: Omit<QuizResult, "id">): Promise<string> {
-  const docRef = await addDoc(collection(db, "quizResults"), {
+  const docRef = await addDoc(collection(getFirebaseDb(), "quizResults"), {
     ...result,
     createdAt: Timestamp.fromDate(result.createdAt),
   });
@@ -21,7 +21,7 @@ export async function saveQuizResult(result: Omit<QuizResult, "id">): Promise<st
 
 export async function getUserResults(userId: string, limitCount = 20): Promise<QuizResult[]> {
   const q = query(
-    collection(db, "quizResults"),
+    collection(getFirebaseDb(), "quizResults"),
     where("userId", "==", userId),
     orderBy("createdAt", "desc"),
     limit(limitCount)

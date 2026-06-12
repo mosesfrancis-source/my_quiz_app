@@ -1,6 +1,6 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
+import { Auth, getAuth } from "firebase/auth";
+import { Firestore, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,8 +11,28 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+let _app: FirebaseApp | null = null;
+let _auth: Auth | null = null;
+let _db: Firestore | null = null;
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export default app;
+function getFirebaseApp(): FirebaseApp {
+  if (_app) return _app;
+  _app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  return _app;
+}
+
+export function getFirebaseAuth(): Auth {
+  if (_auth) return _auth;
+  _auth = getAuth(getFirebaseApp());
+  return _auth;
+}
+
+export function getFirebaseDb(): Firestore {
+  if (_db) return _db;
+  _db = getFirestore(getFirebaseApp());
+  return _db;
+}
+
+// Kept for any direct imports (only safe to call client-side)
+export const auth = typeof window !== "undefined" ? getFirebaseAuth() : null as unknown as Auth;
+export const db = typeof window !== "undefined" ? getFirebaseDb() : null as unknown as Firestore;

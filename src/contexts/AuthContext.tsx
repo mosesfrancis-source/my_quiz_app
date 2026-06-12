@@ -11,7 +11,7 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;
@@ -29,6 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const auth = getFirebaseAuth();
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -37,21 +38,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signIn(email: string, password: string) {
-    await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
   }
 
   async function signUp(email: string, password: string, displayName: string) {
-    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
     await updateProfile(user, { displayName });
   }
 
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    await signInWithPopup(getFirebaseAuth(), provider);
   }
 
   async function logOut() {
-    await signOut(auth);
+    await signOut(getFirebaseAuth());
   }
 
   return (
