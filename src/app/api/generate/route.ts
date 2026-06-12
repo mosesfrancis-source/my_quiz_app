@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export async function POST(req: NextRequest) {
+  if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === "PASTE_YOUR_KEY_HERE") {
+    return NextResponse.json(
+      { error: "Claude API key is not configured. Add ANTHROPIC_API_KEY to your .env.local file." },
+      { status: 500 }
+    );
+  }
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
   try {
     const { topicSummaries, numQuestions, difficulty } = await req.json();
 
@@ -68,11 +75,13 @@ ${topicSummaries}`;
     }
 
     return NextResponse.json({ questions });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Generate error:", err);
-    return NextResponse.json(
-      { error: "Failed to generate questions. Please try again." },
-      { status: 500 }
-    );
+    const message = err instanceof Error ? err.message : "Unknown error";
+    // Surface auth errors clearly
+    if (message.includes("401") || message.includes("invalid_api_key") || message.includes("Authentication")) {
+      return NextResponse.json({ error: "Invalid Claude API key. Check ANTHROPIC_API_KEY in .env.local." }, { status: 500 });
+    }
+    return NextResponse.json({ error: `Generation failed: ${message}` }, { status: 500 });
   }
 }
