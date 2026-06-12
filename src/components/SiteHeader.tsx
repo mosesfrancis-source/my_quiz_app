@@ -94,7 +94,7 @@ export default function SiteHeader() {
               flexShrink: 0,
             }}>
               <Image
-                src="/ndsu-logo.png"
+                src="/ndsu.jpeg"
                 alt="NDSU"
                 width={44}
                 height={44}
@@ -132,7 +132,7 @@ export default function SiteHeader() {
               flexShrink: 0,
             }}>
               <Image
-                src="/etsl-logo.png"
+                src="/etusl.PNG"
                 alt="ETSL"
                 width={44}
                 height={44}

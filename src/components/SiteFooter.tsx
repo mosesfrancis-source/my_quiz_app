@@ -59,7 +59,7 @@ export default function SiteFooter() {
                   display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                 }}>
                   <Image
-                    src="/ndsu-logo.png"
+                    src="/ndsu.jpeg"
                     alt="NDSU"
                     width={36}
                     height={36}
@@ -81,7 +81,7 @@ export default function SiteFooter() {
                   display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                 }}>
                   <Image
-                    src="/etsl-logo.png"
+                    src="/etusl.PNG"
                     alt="ETSL"
                     width={36}
                     height={36}
